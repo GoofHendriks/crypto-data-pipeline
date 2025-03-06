@@ -1,6 +1,13 @@
 import requests
-import pandas as pd
+import psycopg2
 from datetime import datetime
+
+# PostgreSQL connection details
+DB_NAME = "crypto_db"
+DB_USER = "postgres"
+DB_PASSWORD = "Goof1pip!"  # Change this to your PostgreSQL password
+DB_HOST = "localhost"
+DB_PORT = "5432"  # Change if using a different port
 
 def fetch_crypto_data():
     """
@@ -25,27 +32,43 @@ def fetch_crypto_data():
             "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "price": values["usd"],
             "market_cap": values.get("usd_market_cap", None),
-            "24h_vol": values.get("usd_24h_vol", None),
-            "24h_change": values.get("usd_24h_change", None)
+            "volume_24h": values.get("usd_24h_vol", None),
+            "change_24h": values.get("usd_24h_change", None)
         })
     
-    return pd.DataFrame(records)
+    return records
 
-def save_to_csv(df, filename):
+def store_in_postgres(records):
     """
-    Save processed crypto data to a CSV file.
+    Store crypto data in PostgreSQL database.
     """
-    df.to_csv(filename, index=False)
-    print(f"Crypto data saved to {filename}")
+    try:
+        conn = psycopg2.connect(
+            dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT
+        )
+        cur = conn.cursor()
+
+        for record in records:
+            cur.execute("""
+                INSERT INTO crypto_prices (symbol, date, price, market_cap, volume_24h, change_24h)
+                VALUES (%s, %s, %s, %s, %s, %s);
+            """, (record["symbol"], record["date"], record["price"], record["market_cap"], record["volume_24h"], record["change_24h"]))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("✅ Data successfully stored in PostgreSQL.")
+
+    except Exception as e:
+        print(f"⚠️ Error storing data in PostgreSQL: {e}")
 
 def main():
     """
-    Fetch and process crypto price data.
+    Fetch and store crypto price data in PostgreSQL.
     """
     print("Fetching cryptocurrency prices...")
-    df = fetch_crypto_data()
-    save_to_csv(df, "../data/crypto_prices.csv")  # Save in the data folder
+    records = fetch_crypto_data()
+    store_in_postgres(records)
 
 if __name__ == "__main__":
     main()
- 
