@@ -36,7 +36,7 @@ def save_to_csv(df, filename):
     Save processed crypto data to a CSV file.
     """
     df.to_csv(filename, index=False)
-    print(f"✅ Crypto data saved to {filename}")
+    print(f"Crypto data saved to {filename}")
 
 def main():
     """
