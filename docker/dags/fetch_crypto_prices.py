@@ -2,12 +2,12 @@ import requests
 import psycopg2
 from datetime import datetime
 
-# PostgreSQL connection details
-DB_NAME = "crypto_db"
-DB_USER = "postgres"
-DB_PASSWORD = "Goof1pip!"  # Change this to your PostgreSQL password
-DB_HOST = "localhost"
-DB_PORT = "5432"  # Change if using a different port
+DB_NAME = "airflow"  
+DB_USER = "airflow"  
+DB_PASSWORD = "airflow"  
+DB_HOST = "postgres"
+DB_PORT = "5432"
+
 
 def fetch_crypto_data():
     """
