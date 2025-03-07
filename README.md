@@ -53,7 +53,7 @@ docker exec -it postgres psql -U airflow -d airflow -c "SELECT * FROM crypto_pri
 - Enable the `crypto_scraper` DAG to run automatically.
 
 ## DAG Automation Status
-The DAG **`crypto_scraper`** is set to run **every 10 minutes (`*/10 * * * *`)**. It is already **running automatically** in Apache Airflow, as confirmed by successful executions in the UI.
+The DAG **`crypto_scraper`** is set to run **every 10 minutes (`*/10 * * * *`)**.
 
 ## Project Structure
 ```sh
